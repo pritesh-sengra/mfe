@@ -17,7 +17,7 @@ import styles from "./login/loginStyles";
 
 
 
-export default function SignIn({ onSignIn }) {
+export default function SignIn1({ onSignIn }) {
   const classes = styles();
   const [username, usernameupdate] = useState('');
     const [password, passwordupdate] = useState('');

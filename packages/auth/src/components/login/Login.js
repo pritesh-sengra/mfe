@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { useHistory } from "react-router-dom";
 import {
   Avatar,
@@ -14,23 +14,29 @@ import {
   Typography,
 } from "@material-ui/core";
 import LockOutlinedIcon from "@material-ui/icons/LockOutlined";
-import Copyright from "../copyright/Copyright";
 import Layout from "../layout/layout";
 import loginStyles from "./loginStyles";
-import loginForm from "./loginForm";
+import StickyFooter from "../../../../container/src/components/Footer";
 
 export default function Login() {
   const classes = loginStyles();
   const history = useHistory();
-  const formik = loginForm({
-    submit: async (values, helpers) => {
-      try {
-        history.push("/dashboard");
-      } catch (err) {
-        console.log(err);
-      }
-    },
-  });
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  const validateText = (value) => {
+    return value.length > 0 && value.length < 250;
+  };
+
+  const validateEmail = (value) => {
+    const emailRegex =
+      /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|.(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    return (
+      value.length > 0 &&
+      value.length < 250 &&
+      String(email).toLowerCase().match(emailRegex)
+    );
+  };
 
   return (
     <div className={classes.container}>
@@ -46,40 +52,44 @@ export default function Login() {
           <form
             className={classes.form}
             noValidate
-            onSubmit={formik.handleSubmit}
+            onSubmit={(e) => {
+              if (!validateEmail(email) || !validateText(password)) {
+                e.preventDefault();
+                return;
+              }
+              history.push("/dashboard");
+            }}
           >
             <TextField
               variant="outlined"
               margin="normal"
-              required
-              fullWidth
               id="email"
               label="Email Address"
               name="email"
               autoComplete="email"
-              autoFocus
               type="email"
-              error={!!(formik.touched.email && formik.errors.email)}
-              helperText={formik.touched.email && formik.errors.email}
-              onBlur={formik.handleBlur}
-              onChange={formik.handleChange}
-              value={formik.values.email}
+              error={!validateEmail(email)}
+              required
+              fullWidth
+              autoFocus
+              onChange={(e) => {
+                setEmail(e.target.value);
+              }}
             />
             <TextField
               variant="outlined"
               margin="normal"
-              required
-              fullWidth
               name="password"
               label="Password"
               type="password"
               id="password"
               autoComplete="current-password"
-              error={!!(formik.touched.password && formik.errors.password)}
-              helperText={formik.touched.password && formik.errors.password}
-              onBlur={formik.handleBlur}
-              onChange={formik.handleChange}
-              value={formik.values.password}
+              error={!validateText(password)}
+              required
+              fullWidth
+              onChange={(e) => {
+                setPassword(e.target.value);
+              }}
             />
             <FormControlLabel
               control={<Checkbox value="remember" color="primary" />}
@@ -94,11 +104,6 @@ export default function Login() {
             >
               Sign In
             </Button>
-            {formik.errors.submit && (
-              <Typography color="error" sx={{ mt: 3 }} variant="body2">
-                {formik.errors.submit}
-              </Typography>
-            )}
             <Grid container>
               <Grid item xs>
                 <Link href="#" variant="body2">
@@ -114,7 +119,8 @@ export default function Login() {
           </form>
         </div>
         <Box mt={8}>
-          <Copyright />
+          {/* <Copyright /> */}
+          <StickyFooter />
         </Box>
       </Container>
       <Container component="main" className={classes.layoutContainer}>
