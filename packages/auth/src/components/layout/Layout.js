@@ -86,7 +86,7 @@ const Layout = () => {
               }}
               variant="h4"
             >
-              The Operational Digital Twin for Smarter Supply Chains.
+              The Operational Digital Twin for Smarter Supply Chains. 
             </Typography>
             <Typography align="center" sx={{ mb: 3 }} variant="h3">
               <Link
